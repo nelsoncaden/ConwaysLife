@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -24,25 +25,28 @@ public class Driver extends JFrame {
 	
 	public int rectSize;
 	public int sleepTime;
+	public boolean pause;
+	public boolean play;
+	public Panel panel;
 	
 	public Driver() {
 		JLabel label1 = new JLabel("Please select the dimensions for the cellular automaton: ");
 		JButton button1 = new JButton("25x25");
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					rectSize = 625;
+					rectSize = 25;
 				}
 			});
 		JButton button2 = new JButton("50x50");
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					rectSize = 2500;
+					rectSize = 50;
 				}
 			});
 		JButton button3 = new JButton("100x100");
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					rectSize = 10000;
+					rectSize = 100;
 				}
 			});
 		JLabel label2 = new JLabel("Please select the speed for the cellular automaton: ");
@@ -91,23 +95,53 @@ public class Driver extends JFrame {
 		add(panel4);
 		add(panel5);
 		setSize(600, 400);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Welcome to Conway's Game of Life!");
 		setVisible(true);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
 	public Driver(String run) {
-		setSize(700, 700);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		Container contain = getContentPane();
+		contain.setLayout(new BorderLayout());
+		panel = new Panel();
+		JButton pause = new JButton("Pause");
+		pause.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					gamePaused();
+				}
+			});
+		JButton play = new JButton("Pause");
+		play.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					frameRunner();
+				}
+			});
+		contain.add(new JLabel("CONWAY'S GAME OF LIFE"), BorderLayout.NORTH);
+		contain.add(panel, BorderLayout.CENTER);
+		contain.add(pause, BorderLayout.WEST);
+		contain.add(play, BorderLayout.EAST);
+		setSize(700, 700);
 		setTitle("Welcome to Conway's Game of Life!");
 		setVisible(true);
-		frameRunner();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
 	public void frameRunner() {
+		CellList cell = new CellList(rectSize);
 		while(true) {
-			
+			cell.iterate();
+			int[][] cellList = cell.getCellList();
+			panel.setCellList(cellList);
+			panel.repaint();
+			if (gamePaused()) {
+				break;
+			}
 		}
+	}
+	
+	public boolean gamePaused() {
+		return false;
 	}
 
 	public static void main(String[] args) {
